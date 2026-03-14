@@ -601,8 +601,8 @@ export default function Home() {
     return (
       <div className={`screen ${bgClass} fade`}>
         <div className="card" style={{ maxWidth: 480, width: "100%" }}>
-          <div style={{ textAlign: "center", marginBottom: "1.25rem" }}>
-            <Image src="/images/maritana_logo_nobg.png" alt="Maritana" width={160} height={40} style={{ height: 40, width: "auto" }} />
+          <div style={{ textAlign: "center", marginBottom: "1rem" }}>
+            <Image src="/images/maritana_logo_nobg.png" alt="Maritana" width={240} height={60} style={{ height: 60, width: "auto", display: "block", margin: "0 auto" }} />
           </div>
           <div className="progress-track">
             <div className="progress-fill" style={{ width: `${pct}%` }}></div>
@@ -732,7 +732,7 @@ export default function Home() {
       <div className="screen bg-cream fade">
         <div className="card" style={{ maxWidth: 480, width: "100%" }}>
           <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
-            <Image src="/images/maritana_logo_nobg.png" alt="Maritana" width={160} height={40} style={{ height: 40, width: "auto", marginBottom: 8 }} />
+            <Image src="/images/maritana_logo_nobg.png" alt="Maritana" width={240} height={60} style={{ height: 60, width: "auto", display: "block", margin: "0 auto 8px" }} />
             <div className="logo-sub">su vela de pareja</div>
           </div>
 
