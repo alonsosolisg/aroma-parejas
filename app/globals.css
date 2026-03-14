@@ -181,6 +181,19 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+  .nav {
+    flex-direction: column-reverse;
+  }
+  .btn-back,
+  .btn-next {
+    width: 100%;
+    text-align: center;
+  }
 }
 
 .btn-back {
