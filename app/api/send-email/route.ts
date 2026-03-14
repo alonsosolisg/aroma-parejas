@@ -159,14 +159,14 @@ export async function POST(request: Request) {
                 </table>
               </div>
               <a href="${waUrl}" style="display:block;background:#25D366;color:#fff;text-decoration:none;border-radius:10px;padding:16px;font-size:15px;font-weight:500;text-align:center;margin-bottom:12px">Pedir por WhatsApp</a>
-              <a href="https://personaliza.maritana.pe/" style="display:block;background:#fff;color:#407645;text-decoration:none;border:1.5px solid #407645;border-radius:10px;padding:14px;font-size:14px;font-weight:500;text-align:center">Personalizar en maritana.pe</a>
+              <a href="https://maritana.pe/" style="display:block;background:#fff;color:#407645;text-decoration:none;border:1.5px solid #407645;border-radius:10px;padding:14px;font-size:14px;font-weight:500;text-align:center">Ver catálogo en maritana.pe</a>
             </td>
           </tr>
           <tr>
             <td style="background:#f5f3ef;padding:20px 40px;text-align:center;border-top:1px solid #e8e4da">
               <div style="font-size:11px;color:#aaa;line-height:1.7">
                 Resultado generado en el test de pareja de<br>
-                <strong style="color:#407645">maritana velas artesanales</strong>
+                <strong style="color:#407645">maritana</strong>
               </div>
             </td>
           </tr>
