@@ -591,6 +591,7 @@ export default function Home() {
       setEmailStatus("Ingresa un correo válido.");
       return;
     }
+    if (!result) return;
 
     setEmailLoading(true);
     setEmailStatus("");

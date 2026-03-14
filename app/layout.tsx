@@ -1,17 +1,5 @@
 import type { Metadata } from "next";
-import { Prata, Montserrat } from "next/font/google";
 import "./globals.css";
-
-const prata = Prata({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-prata",
-});
-
-const montserrat = Montserrat({
-  subsets: ["latin"],
-  variable: "--font-montserrat",
-});
 
 export const metadata: Metadata = {
   title: "Maritana — ¿Cuál es el aroma de su amor?",
@@ -34,7 +22,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className={`${prata.variable} ${montserrat.variable}`}>
+      <body>
         {children}
       </body>
     </html>
