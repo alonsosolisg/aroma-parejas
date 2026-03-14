@@ -43,6 +43,17 @@ const INCOMPAT = [
   ["neroli", "pino"],
 ];
 
+const ALLOWED_HOSTS = ["parejas.maritana.pe", "aroma-parejas.vercel.app", "localhost", "127.0.0.1"];
+
+function shouldShowLogo(): boolean {
+  if (typeof window === "undefined") return true;
+  // Hide if embedded in iframe
+  if (window.self !== window.top) return false;
+  // Hide if hostname not in allowed list
+  if (!ALLOWED_HOSTS.includes(window.location.hostname)) return false;
+  return true;
+}
+
 const isCompat = (a: string, b: string) =>
   !INCOMPAT.some(
     ([x, y]) => (x === a && y === b) || (x === b && y === a)
@@ -507,6 +518,11 @@ export default function Home() {
   const [email, setEmail] = useState("");
   const [emailStatus, setEmailStatus] = useState("");
   const [emailLoading, setEmailLoading] = useState(false);
+  const [showLogo, setShowLogo] = useState(true);
+
+  useEffect(() => {
+    setShowLogo(shouldShowLogo());
+  }, []);
 
   const totalSteps = QS.length * 2;
   const { q, p } = stepQP(step);
@@ -643,7 +659,7 @@ export default function Home() {
     return (
       <div className="screen bg-cream fade">
         <div style={{ maxWidth: 420, width: "100%", textAlign: "center" }}>
-          <Image src="/images/maritana_logo_nobg.png" alt="Maritana" width={200} height={50} style={{ height: 50, width: "auto", marginBottom: 8 }} />
+          {showLogo && <Image src="/images/maritana_logo_nobg.png" alt="Maritana" width={200} height={50} style={{ height: 50, width: "auto", marginBottom: 8 }} />}
           <div style={{ fontSize: 44, margin: "2rem 0 1rem" }}>🕯️</div>
           <div
             style={{
@@ -696,7 +712,7 @@ export default function Home() {
     return (
       <div className="screen bg-cream fade">
         <div style={{ maxWidth: 420, width: "100%", textAlign: "center" }}>
-          <Image src="/images/maritana_logo_nobg.png" alt="Maritana" width={200} height={50} style={{ height: 50, width: "auto", display: "block", margin: "0 auto 8px" }} />
+          {showLogo && <Image src="/images/maritana_logo_nobg.png" alt="Maritana" width={200} height={50} style={{ height: 50, width: "auto", display: "block", margin: "0 auto 8px" }} />}
           <div style={{ fontSize: 36, margin: "1.5rem 0 0.75rem" }}>👩‍❤️‍👨</div>
           <div
             style={{
@@ -762,7 +778,7 @@ export default function Home() {
       <div className={`screen ${bgClass} fade`}>
         <div className="card" style={{ maxWidth: 480, width: "100%" }}>
           <div style={{ textAlign: "center", marginBottom: "1rem" }}>
-            <Image src="/images/maritana_logo_nobg.png" alt="Maritana" width={240} height={60} style={{ height: 60, width: "auto", display: "block", margin: "0 auto" }} />
+            {showLogo && <Image src="/images/maritana_logo_nobg.png" alt="Maritana" width={240} height={60} style={{ height: 60, width: "auto", display: "block", margin: "0 auto" }} />}
           </div>
           <div className="progress-track">
             <div className="progress-fill" style={{ width: `${pct}%` }}></div>
@@ -836,7 +852,7 @@ export default function Home() {
       <div className="screen bg-cream fade">
         <div className="card" style={{ maxWidth: 480, width: "100%" }}>
           <div style={{ textAlign: "center", marginBottom: "1.75rem" }}>
-            <Image src="/images/maritana_logo_nobg.png" alt="Maritana" width={160} height={40} style={{ height: 40, width: "auto" }} />
+            {showLogo && <Image src="/images/maritana_logo_nobg.png" alt="Maritana" width={160} height={40} style={{ height: 40, width: "auto" }} />}
           </div>
           <div style={{ textAlign: "center", marginBottom: "1.75rem" }}>
             <div style={{ fontSize: 36, marginBottom: 12 }}>🌿</div>
@@ -890,7 +906,7 @@ export default function Home() {
       <div className="screen bg-cream fade">
         <div className="card" style={{ maxWidth: 480, width: "100%" }}>
           <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
-            <Image src="/images/maritana_logo_nobg.png" alt="Maritana" width={240} height={60} style={{ height: 60, width: "auto", display: "block", margin: "0 auto 8px" }} />
+            {showLogo && <Image src="/images/maritana_logo_nobg.png" alt="Maritana" width={240} height={60} style={{ height: 60, width: "auto", display: "block", margin: "0 auto 8px" }} />}
             <div className="logo-sub">su vela de pareja</div>
           </div>
 
