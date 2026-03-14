@@ -121,14 +121,13 @@ export async function POST(request: Request) {
       <td align="center">
         <table width="100%" style="max-width:520px;background:#fff;border:1px solid #e4e0d8;border-radius:16px;overflow:hidden">
           <tr>
-            <td style="background:#407645;padding:32px 40px;text-align:center">
-              <div style="font-family:Georgia,serif;font-size:28px;letter-spacing:0.12em;color:#fff">maritana</div>
-              <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#c0dd97;margin-top:6px">velas artesanales</div>
+            <td style="background:#fff;padding:28px 40px;text-align:center;border-bottom:1px solid #e4e0d8">
+              <img src="https://personaliza.maritana.pe/images/maritana_logo_nobg.png" alt="Maritana" style="height:80px;width:auto;display:block;margin:0 auto"/>
             </td>
           </tr>
           <tr>
             <td style="padding:36px 40px">
-              <div style="font-family:Georgia,serif;font-size:22px;color:#3D3D3D;margin-bottom:8px;line-height:1.4">El aroma de su amor</div>
+              <div style="font-family:Georgia,serif;font-size:22px;color:#3D3D3D;margin-bottom:8px;line-height:1.4">El aroma de ${n1} &amp; ${n2}</div>
               <div style="font-size:13px;color:#888;margin-bottom:28px;line-height:1.6">Aquí están los resultados del test de pareja que realizaron juntos.</div>
               <div style="background:#f9f7f3;border-radius:12px;padding:20px 24px;margin-bottom:24px">
                 <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#aaa;margin-bottom:4px">Compatibilidad aromática</div>
