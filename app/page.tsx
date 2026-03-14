@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 
 // Data constants
 const AROMAS = [
@@ -548,7 +549,7 @@ export default function Home() {
     return (
       <div className="screen bg-cream fade">
         <div style={{ maxWidth: 420, width: "100%", textAlign: "center" }}>
-          <img src="/images/maritana_logo_nobg.png" alt="Maritana" style={{ height: 50, marginBottom: 8 }} />
+          <Image src="/images/maritana_logo_nobg.png" alt="Maritana" width={200} height={50} style={{ height: 50, width: "auto", marginBottom: 8 }} />
           <div style={{ fontSize: 44, margin: "2rem 0 1rem" }}>🕯️</div>
           <div
             style={{
@@ -601,7 +602,7 @@ export default function Home() {
       <div className={`screen ${bgClass} fade`}>
         <div className="card" style={{ maxWidth: 480, width: "100%" }}>
           <div style={{ textAlign: "center", marginBottom: "1.25rem" }}>
-            <img src="/images/maritana_logo_nobg.png" alt="Maritana" style={{ height: 40 }} />
+            <Image src="/images/maritana_logo_nobg.png" alt="Maritana" width={160} height={40} style={{ height: 40, width: "auto" }} />
           </div>
           <div className="progress-track">
             <div className="progress-fill" style={{ width: `${pct}%` }}></div>
@@ -677,7 +678,7 @@ export default function Home() {
       <div className="screen bg-cream fade">
         <div className="card" style={{ maxWidth: 480, width: "100%" }}>
           <div style={{ textAlign: "center", marginBottom: "1.75rem" }}>
-            <img src="/images/maritana_logo_nobg.png" alt="Maritana" style={{ height: 40 }} />
+            <Image src="/images/maritana_logo_nobg.png" alt="Maritana" width={160} height={40} style={{ height: 40, width: "auto" }} />
           </div>
           <div style={{ textAlign: "center", marginBottom: "1.75rem" }}>
             <div style={{ fontSize: 36, marginBottom: 12 }}>🌿</div>
@@ -731,7 +732,7 @@ export default function Home() {
       <div className="screen bg-cream fade">
         <div className="card" style={{ maxWidth: 480, width: "100%" }}>
           <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
-            <img src="/images/maritana_logo_nobg.png" alt="Maritana" style={{ height: 40, marginBottom: 8 }} />
+            <Image src="/images/maritana_logo_nobg.png" alt="Maritana" width={160} height={40} style={{ height: 40, width: "auto", marginBottom: 8 }} />
             <div className="logo-sub">su vela de pareja</div>
           </div>
 
