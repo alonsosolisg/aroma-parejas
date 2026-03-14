@@ -383,7 +383,7 @@ body {
   border: 0.5px solid #ddd8ce;
   border-radius: 9px;
   padding: 12px 14px;
-  font-size: 14px;
+  font-size: 16px;
   font-family: var(--font-montserrat), Montserrat, sans-serif;
   outline: none;
   background: #fff;
@@ -405,7 +405,7 @@ body {
   border: 0.5px solid #ddd8ce;
   border-radius: 9px;
   padding: 11px 14px;
-  font-size: 13px;
+  font-size: 16px;
   font-family: var(--font-montserrat), Montserrat, sans-serif;
   outline: none;
   background: #fff;

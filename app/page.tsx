@@ -296,6 +296,71 @@ function mainCat(topIds: string[]) {
   return best;
 }
 
+// Determines wax, wick, and jar from quiz answers
+// Q indices (0-based): 0=ambiente, 1=momento, 2=sensación, 3=lugar, 4=personalidad, 5=pareja
+// Option indices per question: see QS definition above
+function buildConfig(selIdx: Record<number, (number | undefined)[]>, dominantCat: string) {
+  const p1 = selIdx[1] || [];
+  const p2 = selIdx[2] || [];
+
+  // WAX — based on dominant aroma family
+  let wax: string;
+  let waxPrice: number;
+  if (dominantCat === "Frescos") {
+    wax = "Cera de Soya"; waxPrice = 0;
+  } else if (dominantCat === "Florales" || dominantCat === "Dulces") {
+    wax = "Cera de Coco"; waxPrice = 5;
+  } else {
+    // Amaderados, Resinosos, mixed
+    wax = "Soya + Coco"; waxPrice = 2;
+  }
+
+  // WICK — wood wick for intimate/romantic couples, eco otherwise
+  // Q2=2 → noche íntima, Q3=2 → romance y misterio, Q6=1 → románticos
+  let romanticScore = 0;
+  if (p1[1] === 2) romanticScore += 2;
+  if (p2[1] === 2) romanticScore += 2;
+  if (p1[2] === 2) romanticScore += 2;
+  if (p2[2] === 2) romanticScore += 2;
+  if (p1[5] === 1) romanticScore += 1;
+  if (p2[5] === 1) romanticScore += 1;
+
+  const wick = romanticScore >= 3 ? "Mecha de Madera" : "Mecha Eco";
+  const wickPrice = romanticScore >= 3 ? 17 : 12;
+
+  // JAR — ceramic for romantic/bedroom, amber for homey/sala, glass for outdoors/adventurous
+  let ceramicScore = 0, amberScore = 0, glassScore = 0;
+
+  if (p1[3] === 1) ceramicScore += 2; // dormitorio
+  if (p2[3] === 1) ceramicScore += 2;
+  if (p1[5] === 1) ceramicScore += 2; // románticos
+  if (p2[5] === 1) ceramicScore += 2;
+
+  if (p1[3] === 2) amberScore += 2; // sala
+  if (p2[3] === 2) amberScore += 2;
+  if (p1[5] === 2) amberScore += 2; // hogareños
+  if (p2[5] === 2) amberScore += 2;
+
+  if (p1[3] === 3) glassScore += 2; // al aire libre
+  if (p2[3] === 3) glassScore += 2;
+  if (p1[5] === 0) glassScore += 1; // aventureros
+  if (p2[5] === 0) glassScore += 1;
+  if (p1[5] === 3) glassScore += 1; // libres y frescos
+  if (p2[5] === 3) glassScore += 1;
+
+  let jar: string;
+  let jarPrice: number;
+  if (ceramicScore > 0 && ceramicScore >= amberScore && ceramicScore >= glassScore) {
+    jar = "Frasco de Cerámica"; jarPrice = 18;
+  } else if (glassScore > 0 && glassScore >= amberScore) {
+    jar = "Frasco de Vidrio"; jarPrice = 10;
+  } else {
+    jar = "Frasco Ámbar"; jarPrice = 10;
+  }
+
+  return { wax, waxPrice, wick, wickPrice, jar, jarPrice };
+}
+
 function buildResult(ans: Record<number, string[][]>, selIdx: Record<number, (number | undefined)[]>): Result {
   const allAromas = AROMAS.reduce((acc, a) => ({ ...acc, [a.id]: 0 }), {} as Record<string, number>);
 
@@ -347,13 +412,16 @@ function buildResult(ans: Record<number, string[][]>, selIdx: Record<number, (nu
   const sameQBono = sameQ * 5; // +5% por cada pregunta respondida igual
   const matchPct = Math.min(98, basePct + commonBonus + sameQBono);
 
+  const dominantCat = mainCat([...t1, ...t2]);
+  const config = buildConfig(selIdx, dominantCat);
+
   return {
     aromas: filtered,
     matchPct,
-    wax: "Soya + Cera de Coco",
-    wick: "Mecha Eco",
-    jar: "Frasco Ámbar",
-    price: 20 + (filtered.length - 1) * 5 + 12 + 3 + 10,
+    wax: config.wax,
+    wick: config.wick,
+    jar: config.jar,
+    price: 20 + (filtered.length - 1) * 5 + 3 + config.waxPrice + config.wickPrice + config.jarPrice,
     t1,
     t2,
     common,
@@ -499,6 +567,12 @@ export default function Home() {
   const goToResult = () => {
     setPhase("result");
   };
+
+  useEffect(() => {
+    if (phase === "result") {
+      window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+    }
+  }, [phase]);
 
   const restart = () => {
     setPhase("intro");
