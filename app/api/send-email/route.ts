@@ -14,6 +14,7 @@ type QuizData = {
   email: string;
   result: Result;
   selIdx: Record<number, (number | undefined)[]>;
+  names?: { name1: string; name2: string };
 };
 
 const AROMAS_MAP: Record<string, { name: string; icon: string }> = {
@@ -76,7 +77,9 @@ function buildWALink(res: Result) {
 
 export async function POST(request: Request) {
   try {
-    const { email, result, selIdx }: QuizData = await request.json();
+    const { email, result, selIdx, names }: QuizData = await request.json();
+    const n1 = names?.name1 || "Persona 1";
+    const n2 = names?.name2 || "Persona 2";
 
     if (!email || !email.includes("@")) {
       return NextResponse.json({ error: "Email inválido" }, { status: 400 });
@@ -199,12 +202,12 @@ export async function POST(request: Request) {
           </tr>
           <tr>
             <td style="padding:8px 10px;border-bottom:1px solid #eee;font-size:12px;">
-              <strong>Persona 1:</strong> ${p1Label}
+              <strong>${n1}:</strong> ${p1Label}
             </td>
           </tr>
           <tr>
             <td style="padding:8px 10px;border-bottom:1px solid #eee;font-size:12px;">
-              <strong>Persona 2:</strong> ${p2Label}
+              <strong>${n2}:</strong> ${p2Label}
             </td>
           </tr>
         `;
@@ -227,6 +230,9 @@ export async function POST(request: Request) {
           </tr>
           <tr>
             <td style="padding:30px 40px">
+              <div style="font-size:14px;color:#666;margin-bottom:20px">
+                <strong>Pareja:</strong> ${n1} &amp; ${n2}
+              </div>
               <div style="font-size:14px;color:#666;margin-bottom:20px">
                 <strong>Cliente:</strong> ${email}
               </div>
@@ -260,7 +266,7 @@ export async function POST(request: Request) {
       await transporter.sendMail({
         from: `"Maritana" <${process.env.GMAIL_USER}>`,
         to: INTERNAL_EMAIL,
-        subject: `Nuevo lead - Compatibilidad ${result.matchPct}% - ${email}`,
+        subject: `Nuevo lead - ${n1} & ${n2} - Compatibilidad ${result.matchPct}% - ${email}`,
         html: internalHtml,
       });
     }

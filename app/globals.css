@@ -378,6 +378,22 @@ body {
   animation: fadeIn 0.3s ease forwards;
 }
 
+.name-input {
+  width: 100%;
+  border: 0.5px solid #ddd8ce;
+  border-radius: 9px;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-family: var(--font-montserrat), Montserrat, sans-serif;
+  outline: none;
+  background: #fff;
+  color: #3d3d3d;
+}
+
+.name-input:focus {
+  border-color: #407645;
+}
+
 .email-form {
   display: flex;
   gap: 8px;
