@@ -328,34 +328,37 @@ function buildConfig(selIdx: Record<number, (number | undefined)[]>, dominantCat
   const wick = romanticScore >= 3 ? "Mecha de Madera" : "Mecha Eco";
   const wickPrice = romanticScore >= 3 ? 17 : 12;
 
-  // JAR — ceramic for romantic/bedroom, amber for homey/sala, glass for outdoors/adventurous
-  let ceramicScore = 0, amberScore = 0, glassScore = 0;
+  // JAR — amber for romantic/bedroom/homey, green for outdoors/adventurous/fresh
+  let amberScore = 0, greenScore = 0;
 
-  if (p1[3] === 1) ceramicScore += 2; // dormitorio
-  if (p2[3] === 1) ceramicScore += 2;
-  if (p1[5] === 1) ceramicScore += 2; // románticos
-  if (p2[5] === 1) ceramicScore += 2;
+  if (p1[3] === 1) amberScore += 2; // dormitorio
+  if (p2[3] === 1) amberScore += 2;
+  if (p1[5] === 1) amberScore += 2; // románticos
+  if (p2[5] === 1) amberScore += 2;
 
   if (p1[3] === 2) amberScore += 2; // sala
   if (p2[3] === 2) amberScore += 2;
   if (p1[5] === 2) amberScore += 2; // hogareños
   if (p2[5] === 2) amberScore += 2;
 
-  if (p1[3] === 3) glassScore += 2; // al aire libre
-  if (p2[3] === 3) glassScore += 2;
-  if (p1[5] === 0) glassScore += 1; // aventureros
-  if (p2[5] === 0) glassScore += 1;
-  if (p1[5] === 3) glassScore += 1; // libres y frescos
-  if (p2[5] === 3) glassScore += 1;
+  if (p1[3] === 3) greenScore += 2; // al aire libre
+  if (p2[3] === 3) greenScore += 2;
+  if (p1[5] === 0) greenScore += 1; // aventureros
+  if (p2[5] === 0) greenScore += 1;
+  if (p1[5] === 3) greenScore += 1; // libres y frescos
+  if (p2[5] === 3) greenScore += 1;
+
+  // Also give green score for fresh/dominant categories
+  if (dominantCat === "Frescos") {
+    greenScore += 1;
+  }
 
   let jar: string;
   let jarPrice: number;
-  if (ceramicScore > 0 && ceramicScore >= amberScore && ceramicScore >= glassScore) {
-    jar = "Frasco de Cerámica"; jarPrice = 18;
-  } else if (glassScore > 0 && glassScore >= amberScore) {
-    jar = "Frasco de Vidrio"; jarPrice = 10;
+  if (amberScore >= greenScore) {
+    jar = "Vidrio Ámbar"; jarPrice = 10;
   } else {
-    jar = "Frasco Ámbar"; jarPrice = 10;
+    jar = "Vidrio Verde"; jarPrice = 10;
   }
 
   return { wax, waxPrice, wick, wickPrice, jar, jarPrice };
@@ -694,7 +697,7 @@ export default function Home() {
       <div className="screen bg-cream fade">
         <div style={{ maxWidth: 420, width: "100%", textAlign: "center" }}>
           <Image src="/images/maritana_logo_nobg.png" alt="Maritana" width={200} height={50} style={{ height: 50, width: "auto", display: "block", margin: "0 auto 8px" }} />
-          <div style={{ fontSize: 36, margin: "1.5rem 0 0.75rem" }}>💑</div>
+          <div style={{ fontSize: 36, margin: "1.5rem 0 0.75rem" }}>👩‍❤️‍👨</div>
           <div
             style={{
               fontFamily: "var(--font-prata), serif",
@@ -921,7 +924,7 @@ export default function Home() {
           <div className="chips-row">
             <span className="chip chip-cfg">🌱 {result.wax}</span>
             <span className="chip chip-cfg">🔥 {result.wick}</span>
-            <span className="chip chip-cfg">🫙 {result.jar}</span>
+            <span className="chip chip-cfg">🫙 {result.jar.replace("Vidrio ", "")}</span>
           </div>
 
           <div className="price-row">
