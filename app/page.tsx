@@ -599,7 +599,13 @@ export default function Home() {
       const res = await fetch("/api/send-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, result, selIdx, names: { name1, name2 } }),
+        body: JSON.stringify({
+          email,
+          result,
+          selIdx,
+          names: { name1, name2 },
+          messages: buildMessageLines(result, selIdx, name1, name2),
+        }),
       });
 
       if (res.ok) {

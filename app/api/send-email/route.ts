@@ -15,6 +15,7 @@ type QuizData = {
   result: Result;
   selIdx: Record<number, (number | undefined)[]>;
   names?: { name1: string; name2: string };
+  messages?: string[];
 };
 
 const AROMAS_MAP: Record<string, { name: string; icon: string }> = {
@@ -77,7 +78,7 @@ function buildWALink(res: Result) {
 
 export async function POST(request: Request) {
   try {
-    const { email, result, selIdx, names }: QuizData = await request.json();
+    const { email, result, selIdx, names, messages }: QuizData = await request.json();
     const n1 = names?.name1 || "Persona 1";
     const n2 = names?.name2 || "Persona 2";
 
@@ -103,73 +104,132 @@ export async function POST(request: Request) {
     // --- Enviar email al cliente ---
     const aList: { name: string; icon: string }[] = result.aromas.map((id: string) => getAroma(id));
     const waUrl = buildWALink(result);
+
     const aromasHtml = aList
       .map(
         (a: { name: string; icon: string }) =>
-          `<span style="display:inline-block;background:#eaf3de;color:#27500a;border:1px solid #c0dd97;border-radius:99px;padding:5px 14px;font-size:13px;font-weight:500;margin:3px">${a.icon} ${a.name}</span>`
+          `<span style="display:inline-block;background:#eaf3de;color:#27500a;border:1px solid #c0dd97;border-radius:99px;padding:6px 16px;font-size:13px;font-weight:500;margin:3px 3px 3px 0">${a.icon} ${a.name}</span>`
       )
       .join("");
+
+    const messagesHtml = (messages || [])
+      .map(
+        (msg) =>
+          `<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:10px">
+            <tr>
+              <td width="4" style="background:#c0dd97;border-radius:3px;font-size:0">&nbsp;</td>
+              <td style="padding:11px 14px;background:#f9f7f3;font-size:13px;color:#3D3D3D;line-height:1.65;border-radius:0 8px 8px 0">${msg}</td>
+            </tr>
+          </table>`
+      )
+      .join("");
+
+    const barPct = result.matchPct;
+    const barRemainder = 100 - barPct;
 
     const htmlContent = `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
 </head>
-<body style="margin:0;padding:0;background:#FDFBF7;font-family:'Montserrat',Helvetica,Arial,sans-serif;color:#3D3D3D">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#FDFBF7;padding:40px 20px">
+<body style="margin:0;padding:0;background:#F7F5F1;font-family:Helvetica,Arial,sans-serif;color:#3D3D3D">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#F7F5F1;padding:32px 16px">
     <tr>
       <td align="center">
-        <table width="100%" style="max-width:520px;background:#fff;border:1px solid #e4e0d8;border-radius:16px;overflow:hidden">
+        <table width="100%" style="max-width:540px">
+
+          <!-- LOGO -->
           <tr>
-            <td style="background:#fff;padding:28px 40px;text-align:center;border-bottom:1px solid #e4e0d8">
-              <img src="https://personaliza.maritana.pe/images/maritana_logo_nobg.png" alt="Maritana" style="height:80px;width:auto;display:block;margin:0 auto"/>
+            <td style="background:#fff;padding:24px 40px;text-align:center;border-radius:16px 16px 0 0;border:1px solid #e4e0d8;border-bottom:none">
+              <img src="https://personaliza.maritana.pe/images/maritana_logo_nobg.png" alt="Maritana" style="height:68px;width:auto;display:block;margin:0 auto"/>
             </td>
           </tr>
+
+          <!-- HERO -->
           <tr>
-            <td style="padding:36px 40px">
-              <div style="font-family:Georgia,serif;font-size:22px;color:#3D3D3D;margin-bottom:8px;line-height:1.4">El aroma de ${n1} &amp; ${n2}</div>
-              <div style="font-size:13px;color:#888;margin-bottom:28px;line-height:1.6">Aquí están los resultados del test de pareja que realizaron juntos.</div>
-              <div style="background:#f9f7f3;border-radius:12px;padding:20px 24px;margin-bottom:24px">
-                <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#aaa;margin-bottom:4px">Compatibilidad aromática</div>
-                <div style="font-size:44px;font-weight:600;color:#407645;line-height:1">${result.matchPct}%</div>
-              </div>
-              <div style="margin-bottom:20px">
-                <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#aaa;margin-bottom:10px">Sus aromas en común</div>
-                <div>${aromasHtml}</div>
-              </div>
-              <div style="border-top:1px solid #e8e4da;padding-top:18px;margin-bottom:24px">
-                <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#aaa;margin-bottom:10px">Configuración base</div>
-                <table width="100%" cellpadding="0" cellspacing="0">
+            <td style="background:#407645;padding:26px 40px;text-align:center;border-left:1px solid #3a6a3d;border-right:1px solid #3a6a3d">
+              <div style="font-family:Georgia,'Times New Roman',serif;font-size:23px;color:#fff;line-height:1.35;letter-spacing:0.02em">El aroma de ${n1} &amp; ${n2}</div>
+              <div style="font-size:11px;color:#c0dd97;margin-top:8px;letter-spacing:0.1em;text-transform:uppercase">Test de pareja &middot; Maritana</div>
+            </td>
+          </tr>
+
+          <!-- BODY -->
+          <tr>
+            <td style="background:#fff;padding:36px 40px;border:1px solid #e4e0d8;border-top:none;border-bottom:none">
+
+              <!-- MESSAGES -->
+              <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:#b0a898;margin-bottom:14px">Lo que encontramos en ustedes</div>
+              ${messagesHtml}
+
+              <!-- DIVIDER -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin:28px 0"><tr><td style="border-top:1px solid #ece9e1;font-size:0">&nbsp;</td></tr></table>
+
+              <!-- COMPATIBILITY -->
+              <div style="text-align:center;margin-bottom:28px">
+                <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:#b0a898;margin-bottom:10px">Compatibilidad aromática</div>
+                <div style="font-size:58px;font-weight:700;color:#407645;line-height:1;letter-spacing:-0.02em">${barPct}%</div>
+                <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:14px;border-radius:99px;background:#eef5e8;height:8px">
                   <tr>
-                    <td style="font-size:13px;color:#3D3D3D;padding:4px 0">🌱 Cera</td>
-                    <td style="font-size:13px;color:#666;text-align:right;padding:4px 0">${result.wax}</td>
-                  </tr>
-                  <tr>
-                    <td style="font-size:13px;color:#3D3D3D;padding:4px 0">🔥 Mecha</td>
-                    <td style="font-size:13px;color:#666;text-align:right;padding:4px 0">${result.wick}</td>
-                  </tr>
-                  <tr>
-                    <td style="font-size:13px;color:#3D3D3D;padding:4px 0">🫙 Frasco</td>
-                    <td style="font-size:13px;color:#666;text-align:right;padding:4px 0">${result.jar}</td>
-                  </tr>
-                  <tr>
-                    <td style="font-size:13px;font-weight:600;color:#3D3D3D;padding-top:12px;border-top:1px solid #e8e4da">Precio</td>
-                    <td style="font-size:18px;font-weight:600;color:#3D3D3D;text-align:right;padding-top:12px;border-top:1px solid #e8e4da">S/ ${result.price}</td>
+                    <td width="${barPct}%" style="background:#407645;border-radius:99px;height:8px;font-size:0">&nbsp;</td>
+                    <td width="${barRemainder}%" style="font-size:0">&nbsp;</td>
                   </tr>
                 </table>
               </div>
-              <a href="${waUrl}" style="display:block;background:#25D366;color:#fff;text-decoration:none;border-radius:10px;padding:16px;font-size:15px;font-weight:500;text-align:center;margin-bottom:12px">Pedir por WhatsApp</a>
+
+              <!-- DIVIDER -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px"><tr><td style="border-top:1px solid #ece9e1;font-size:0">&nbsp;</td></tr></table>
+
+              <!-- AROMAS -->
+              <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:#b0a898;margin-bottom:12px">Sus aromas en común</div>
+              <div style="margin-bottom:28px">${aromasHtml}</div>
+
+              <!-- DIVIDER -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px"><tr><td style="border-top:1px solid #ece9e1;font-size:0">&nbsp;</td></tr></table>
+
+              <!-- CONFIG -->
+              <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:#b0a898;margin-bottom:14px">Su vela perfecta</div>
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:14px">
+                <tr>
+                  <td style="font-size:13px;color:#888;padding:8px 0;border-bottom:1px solid #f0ece4">🌱 Cera</td>
+                  <td style="font-size:13px;color:#3D3D3D;font-weight:500;text-align:right;padding:8px 0;border-bottom:1px solid #f0ece4">${result.wax}</td>
+                </tr>
+                <tr>
+                  <td style="font-size:13px;color:#888;padding:8px 0;border-bottom:1px solid #f0ece4">🔥 Mecha</td>
+                  <td style="font-size:13px;color:#3D3D3D;font-weight:500;text-align:right;padding:8px 0;border-bottom:1px solid #f0ece4">${result.wick}</td>
+                </tr>
+                <tr>
+                  <td style="font-size:13px;color:#888;padding:8px 0">🫙 Frasco</td>
+                  <td style="font-size:13px;color:#3D3D3D;font-weight:500;text-align:right;padding:8px 0">${result.jar}</td>
+                </tr>
+              </table>
+              <table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f2ec;border-radius:10px">
+                <tr>
+                  <td style="padding:14px 18px;font-size:13px;color:#888">Precio estimado</td>
+                  <td style="padding:14px 18px;font-size:20px;font-weight:700;color:#3D3D3D;text-align:right">S/ ${result.price}</td>
+                </tr>
+              </table>
+
+              <!-- DIVIDER -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin:28px 0"><tr><td style="border-top:1px solid #ece9e1;font-size:0">&nbsp;</td></tr></table>
+
+              <!-- CTAs -->
+              <a href="${waUrl}" style="display:block;background:#25D366;color:#fff;text-decoration:none;border-radius:10px;padding:16px;font-size:15px;font-weight:600;text-align:center;margin-bottom:10px">Pedir por WhatsApp</a>
               <a href="https://maritana.pe/" style="display:block;background:#fff;color:#407645;text-decoration:none;border:1.5px solid #407645;border-radius:10px;padding:14px;font-size:14px;font-weight:500;text-align:center">Ver catálogo en maritana.pe</a>
+
             </td>
           </tr>
+
+          <!-- FOOTER -->
           <tr>
-            <td style="background:#f5f3ef;padding:20px 40px;text-align:center;border-top:1px solid #e8e4da">
-              <div style="font-size:11px;color:#aaa;line-height:1.7">
+            <td style="background:#f5f3ef;padding:20px 40px;text-align:center;border:1px solid #e4e0d8;border-top:none;border-radius:0 0 16px 16px">
+              <div style="font-size:11px;color:#b0a898;line-height:1.8">
                 Resultado generado en el test de pareja de<br>
                 <strong style="color:#407645">maritana</strong>
               </div>
             </td>
           </tr>
+
         </table>
       </td>
     </tr>
@@ -180,7 +240,7 @@ export async function POST(request: Request) {
     await transporter.sendMail({
       from: `"Maritana" <${process.env.GMAIL_USER}>`,
       to: email,
-      subject: "Su vela de pareja — maritana",
+      subject: `El aroma de ${n1} & ${n2} — maritana`,
       html: htmlContent,
     });
 
