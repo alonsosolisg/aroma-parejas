@@ -142,7 +142,7 @@ export async function POST(request: Request) {
           <!-- LOGO -->
           <tr>
             <td style="background:#fff;padding:24px 40px;text-align:center;border-radius:16px 16px 0 0;border:1px solid #e4e0d8;border-bottom:none">
-              <img src="https://personaliza.maritana.pe/images/maritana_logo_nobg.png" alt="Maritana" style="height:68px;width:auto;display:block;margin:0 auto"/>
+              <img src="https://aroma-parejas.vercel.app/images/maritana_logo_nobg.png" alt="Maritana" style="height:68px;width:auto;display:block;margin:0 auto"/>
             </td>
           </tr>
 
