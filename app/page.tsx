@@ -242,7 +242,7 @@ const CAT_DESC: Record<string, string> = {
 };
 
 // Types
-type Phase = "intro" | "quiz" | "message" | "result";
+type Phase = "intro" | "names" | "quiz" | "message" | "result";
 
 type Result = {
   aromas: string[];
@@ -365,7 +365,7 @@ function getAroma(id: string) {
   return found || { id, name: id, icon: "🌿" };
 }
 
-function buildMessageLines(res: Result, selIdx: Record<number, (number | undefined)[]>) {
+function buildMessageLines(res: Result, selIdx: Record<number, (number | undefined)[]>, name1: string, name2: string) {
   const { t1, t2, common } = res;
   const c1 = mainCat(t1);
   const c2 = mainCat(t2);
@@ -394,7 +394,7 @@ function buildMessageLines(res: Result, selIdx: Record<number, (number | undefin
     );
   } else {
     lines.push(
-      `Persona 1 se inclina hacia ${CAT_DESC[c1]}, mientras Persona 2 prefiere ${CAT_DESC[c2]}. Son distintos, y esa diferencia crea algo más rico juntos.`
+      `${name1} se inclina hacia ${CAT_DESC[c1]}, mientras ${name2} prefiere ${CAT_DESC[c2]}. Son distintos, y esa diferencia crea algo más rico juntos.`
     );
   }
 
@@ -431,6 +431,8 @@ export default function Home() {
   const [ans, setAns] = useState<Record<number, string[][]>>({ 1: [], 2: [] });
   const [selIdx, setSelIdx] = useState<Record<number, (number | undefined)[]>>({ 1: [], 2: [] });
   const [result, setResult] = useState<Result | null>(null);
+  const [name1, setName1] = useState("");
+  const [name2, setName2] = useState("");
   const [email, setEmail] = useState("");
   const [emailStatus, setEmailStatus] = useState("");
   const [emailLoading, setEmailLoading] = useState(false);
@@ -449,6 +451,10 @@ export default function Home() {
   const pct = Math.round((step / totalSteps) * 100);
 
   const startQuiz = () => {
+    setPhase("names");
+  };
+
+  const startNames = () => {
     setPhase("quiz");
     setStep(0);
   };
@@ -481,10 +487,12 @@ export default function Home() {
       setStep(QS.length * 2 - 1);
     } else if (phase === "result") {
       setPhase("message");
+    } else if (phase === "names") {
+      setPhase("intro");
     } else if (step > 0) {
       setStep((s) => s - 1);
     } else {
-      setPhase("intro");
+      setPhase("names");
     }
   };
 
@@ -498,6 +506,8 @@ export default function Home() {
     setAns({ 1: [], 2: [] });
     setSelIdx({ 1: [], 2: [] });
     setResult(null);
+    setName1("");
+    setName2("");
     setEmail("");
     setEmailStatus("");
   };
@@ -515,7 +525,7 @@ export default function Home() {
       const res = await fetch("/api/send-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, result, selIdx }),
+        body: JSON.stringify({ email, result, selIdx, names: { name1, name2 } }),
       });
 
       if (res.ok) {
@@ -596,6 +606,72 @@ export default function Home() {
     );
   }
 
+  // Render names
+  if (phase === "names") {
+    const canContinue = name1.trim().length > 0 && name2.trim().length > 0;
+    return (
+      <div className="screen bg-cream fade">
+        <div style={{ maxWidth: 420, width: "100%", textAlign: "center" }}>
+          <Image src="/images/maritana_logo_nobg.png" alt="Maritana" width={200} height={50} style={{ height: 50, width: "auto", display: "block", margin: "0 auto 8px" }} />
+          <div style={{ fontSize: 36, margin: "1.5rem 0 0.75rem" }}>💑</div>
+          <div
+            style={{
+              fontFamily: "var(--font-prata), serif",
+              fontSize: 22,
+              color: "#3D3D3D",
+              marginBottom: 10,
+              lineHeight: 1.4,
+            }}
+          >
+            ¿Cómo se llaman?
+          </div>
+          <div style={{ fontSize: 13, color: "#888", marginBottom: "1.75rem", padding: "0 0.5rem" }}>
+            Así podemos hablarles por su nombre durante el test.
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: "1.5rem", textAlign: "left" }}>
+            <div>
+              <label style={{ fontSize: 11, textTransform: "uppercase" as const, letterSpacing: "0.1em", color: "#aaa", display: "block", marginBottom: 6 }}>
+                Persona 1
+              </label>
+              <input
+                className="name-input"
+                type="text"
+                placeholder="Nombre..."
+                value={name1}
+                onChange={(e) => setName1(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && canContinue && startNames()}
+              />
+            </div>
+            <div>
+              <label style={{ fontSize: 11, textTransform: "uppercase" as const, letterSpacing: "0.1em", color: "#aaa", display: "block", marginBottom: 6 }}>
+                Persona 2
+              </label>
+              <input
+                className="name-input"
+                type="text"
+                placeholder="Nombre..."
+                value={name2}
+                onChange={(e) => setName2(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && canContinue && startNames()}
+              />
+            </div>
+          </div>
+          <button
+            className="btn-next btn-p1"
+            style={{ width: "100%", padding: 15, fontSize: 15, borderRadius: 10 }}
+            disabled={!canContinue}
+            onClick={startNames}
+          >
+            Comenzar test →
+          </button>
+          <button className="btn-back" style={{ width: "100%", marginTop: 10 }} onClick={() => setPhase("intro")}>
+            ← Atrás
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   // Render quiz
   if (phase === "quiz") {
     return (
@@ -609,18 +685,16 @@ export default function Home() {
           </div>
           <div className={`turn-banner ${bannerClass}`}>
             <div className={`turn-who ${whoClass}`}>
-              {p === 1 ? "👤 Persona 1 — es tu turno" : "👤 Persona 2 — es tu turno"}
+              {p === 1 ? `👤 ${name1} — es tu turno` : `👤 ${name2} — es tu turno`}
             </div>
             <div className={`turn-hint ${hintClass}`}>
               {p === 1 ? (
                 <>
-                  Elige la opción que más te representa a <strong>ti</strong>. Persona 2
-                  responderá esta misma pregunta después.
+                  Elige la opción que más te representa a <strong>ti</strong>. {name2} responderá esta misma pregunta después.
                 </>
               ) : (
                 <>
-                  Ahora responde <strong>tú</strong>, Persona 2. Elige sin ver lo que eligió Persona
-                  1.
+                  Ahora responde <strong>tú</strong>, {name2}. Elige sin ver lo que eligió {name1}.
                 </>
               )}
             </div>
@@ -662,7 +736,7 @@ export default function Home() {
               {isLastStep
                 ? "Ver resultado 🕯️"
                 : p === 1
-                ? "Listo, pásale a Persona 2 →"
+                ? `Listo, pásale a ${name2} →`
                 : "Siguiente pregunta →"}
             </button>
           </div>
@@ -673,7 +747,7 @@ export default function Home() {
 
   // Render message
   if (phase === "message" && result) {
-    const lines = buildMessageLines(result, selIdx);
+    const lines = buildMessageLines(result, selIdx, name1, name2);
     return (
       <div className="screen bg-cream fade">
         <div className="card" style={{ maxWidth: 480, width: "100%" }}>
@@ -690,7 +764,7 @@ export default function Home() {
                 lineHeight: 1.4,
               }}
             >
-              Lo que encontramos<br />en ustedes dos
+              Lo que encontramos<br />en {name1} y {name2}
             </div>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: "2rem" }}>
@@ -750,7 +824,7 @@ export default function Home() {
             Su vela perfecta
           </div>
           <div style={{ fontSize: 13, color: "#666", marginBottom: "1.25rem", lineHeight: 1.6 }}>
-            Una mezcla creada con los aromas que los representan juntos.
+            Una mezcla creada con los aromas que representan a {name1} y {name2} juntos.
           </div>
 
           <div className="section-label">Aromas</div>
