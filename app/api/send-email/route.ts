@@ -23,7 +23,6 @@ const AROMAS_MAP: Record<string, { name: string; icon: string }> = {
   sandalo: { name: "Sándalo", icon: "🪵" },
   vainilla_francesa: { name: "Vainilla francesa", icon: "🍨" },
   vainilla_amaderada: { name: "Vainilla amaderada", icon: "🍦" },
-  te_blanco: { name: "Té blanco", icon: "🫖" },
   maracuya: { name: "Maracuyá", icon: "🥭" },
   flor_de_azahar: { name: "Flor de azahar", icon: "🌼" },
   orquidea: { name: "Orquídea", icon: "🏵️" },
